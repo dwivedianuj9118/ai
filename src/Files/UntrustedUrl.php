@@ -134,7 +134,8 @@ class UntrustedUrl
 
         $port = $uri->getPort() ?? ($uri->getScheme() === 'https' ? 443 : 80);
 
-        return [$host.':'.$port.':'.implode(',', $addresses)];
+        // curl only applies a pin whose host matches the request URL, so a trailing dot has to be kept...
+        return [$uri->getHost().':'.$port.':'.implode(',', $addresses)];
     }
 
     /**

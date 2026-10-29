@@ -54,6 +54,20 @@ test('the connection is pinned to the validated addresses', function (): void {
     expect($pinned)->toBe(['example.com:443:93.184.216.34']);
 });
 
+test('a host with a trailing dot is pinned as written', function (): void {
+    $pinned = null;
+
+    Http::fake(function (Request $request, array $options) use (&$pinned) {
+        $pinned = $options['curl'][CURLOPT_RESOLVE];
+
+        return Http::response('bytes');
+    });
+
+    (new RemoteImage('https://example.com./photo.png'))->content();
+
+    expect($pinned)->toBe(['example.com.:443:93.184.216.34']);
+});
+
 test('a public ip literal is fetched without pinning', function (string $url): void {
     $pinned = null;
 
